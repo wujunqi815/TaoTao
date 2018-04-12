@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.taotao.common.pojo.EUDataGridResult;
 import com.taotao.mapper.TbItemMapper;
 import com.taotao.pojo.TbItem;
 import com.taotao.pojo.TbItemExample;
@@ -35,6 +38,24 @@ public class ItemServiceImpl implements ItemService {
 			return item;
 		}
 		return null;
+	}
+	
+	/**
+	 * 商品列表查詢
+	 */
+	@Override
+	public EUDataGridResult getItemList(int page, int rows) {
+		
+		TbItemExample example = new TbItemExample();
+		PageHelper.startPage(page, rows);
+		List<TbItem> list = itemMapper.selectByExample(example);
+		
+		EUDataGridResult result = new EUDataGridResult();
+		result.setRows(list);
+		PageInfo<TbItem> pageInfo = new PageInfo<>(list);
+		result.setTotal(pageInfo.getTotal());
+		// TODO Auto-generated method stub
+		return result;
 	}
 
 }
