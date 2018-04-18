@@ -8,6 +8,7 @@ public interface ItemService {
 
 	TbItem getItemById(long itemId);
 	EUDataGridResult getItemList(int page, int rows);
-	TaotaoResult createItem(TbItem item);
+	TaotaoResult createItem(TbItem item, String desc);
+	
 	
 }
