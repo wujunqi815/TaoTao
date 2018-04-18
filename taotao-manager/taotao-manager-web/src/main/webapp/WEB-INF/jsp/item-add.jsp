@@ -69,7 +69,7 @@
 	$(function(){
 		//创建富文本编辑器
 		//itemAddEditor = TAOTAO.createEditor("#itemAddForm [name=desc]");
-	    itemAddEditor = KindEditor.createEditor("#itemAddForm [name=desc]");
+	    itemAddEditor = KindEditor.create("#itemAddForm [name=desc]", TT.kingEditorParams);
 
 		//初始化类目选择和图片上传器
 		TAOTAO.init({fun:function(node){
