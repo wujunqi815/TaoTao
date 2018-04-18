@@ -2,7 +2,5 @@
     <wb-module deploy-name="taotao-common">
         <wb-resource deploy-path="/" source-path="/src/main/java"/>
         <wb-resource deploy-path="/" source-path="/src/main/resources"/>
-        <property name="context-root" value="taotao-common"/>
-        <property name="java-output-path" value="/taotao-common/target/classes"/>
     </wb-module>
 </project-modules>
