@@ -89,7 +89,7 @@
 		//同步文本框中的商品描述
 		itemAddEditor.sync();
 		//取商品的规格
-		/*
+		
 		var paramJson = [];
 		$("#itemAddForm .params li").each(function(i,e){
 			var trs = $(e).find("tr");
@@ -110,7 +110,7 @@
 		//把json对象转换成字符串
 		paramJson = JSON.stringify(paramJson);
 		$("#itemAddForm [name=itemParams]").val(paramJson);
-		*/
+		
 		//ajax的post方式提交表单
 		//$("#itemAddForm").serialize()将表单序列号为key-value形式的字符串
 		$.post("/item/save",$("#itemAddForm").serialize(), function(data){
