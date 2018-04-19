@@ -52,7 +52,7 @@
 	        <tr class="params hide">
 	        	<td>商品规格:</td>
 	        	<td>
-	        		
+	        		 
 	        	</td>
 	        </tr>
 	    </table>
@@ -74,7 +74,7 @@
 		//初始化类目选择和图片上传器
 		TAOTAO.init({fun:function(node){
 			//根据商品的分类id取商品 的规格模板，生成规格信息。第四天内容。
-			//TAOTAO.changeItemParam(node, "itemAddForm");
+			TAOTAO.changeItemParam(node, "itemAddForm");
 		}});
 	});
 	//提交表单
