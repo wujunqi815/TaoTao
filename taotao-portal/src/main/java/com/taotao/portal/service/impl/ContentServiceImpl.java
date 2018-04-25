@@ -21,6 +21,8 @@ public class ContentServiceImpl implements ContentService {
 	private String REST_BASE_URL;
 	@Value("${REST_INDEX_AD_URL}")
 	private String REST_INDEX_AD_URL;
+	@Value("${IMAGE_URL}")
+	private String IMAGE_URL;
 	
 	public String getContentList(){
 		String result = HttpClientUtil.doGet(REST_BASE_URL + REST_INDEX_AD_URL);
@@ -31,12 +33,12 @@ public class ContentServiceImpl implements ContentService {
 			List<Map> resultList = new ArrayList<>();
 			for(TbContent content: list){
 				Map map = new HashMap<>();
-				map.put("src", content.getPic());
-				map.put("height", 470);
-				map.put("width", 590);
-				map.put("srcB", content.getPic2());
-				map.put("heightB", 470);
-				map.put("widthB", 590);
+				map.put("src", IMAGE_URL + content.getPic());
+				map.put("height", 240);
+				map.put("width", 670);
+				map.put("srcB", IMAGE_URL + content.getPic2());
+				map.put("heightB", 550);
+				map.put("widthB", 240);
 				map.put("href", content.getUrl());
 				map.put("alt", content.getSubTitle());
 				System.out.println(content.getPic() + " " + content.getPic2());

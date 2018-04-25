@@ -51,7 +51,7 @@ public class PictureServiceImple implements PictureService {
         	uploadFile.transferTo(newFile);
         	//返回结果
             resultMap.put("error", 0);
-            resultMap.put("url", filePath);
+            resultMap.put("url", "/images/"+newName);
     		return resultMap;
         	
         } catch (Exception e)
