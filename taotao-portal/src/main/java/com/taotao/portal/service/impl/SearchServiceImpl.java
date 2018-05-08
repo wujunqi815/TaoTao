@@ -16,7 +16,9 @@ public class SearchServiceImpl implements SearchService {
 
 	@Value("${SEARCH_BASE_URL}")
 	private String SEARCH_BASE_URL;
-
+	@Value("${IMAGE_URL}")
+	private String IMAGE_URL;
+	
 	@Override
 	public SearchResult search(String queryString, int page) {
 
@@ -27,6 +29,8 @@ public class SearchServiceImpl implements SearchService {
 		try {
 			String json = HttpClientUtil.doGet(SEARCH_BASE_URL, param);
 			TaotaoResult taotaoResult = TaotaoResult.formatToPojo(json, SearchResult.class);
+			
+			System.out.println(json);
 			if(taotaoResult.getStatus() == 200){
 				SearchResult result = (SearchResult) taotaoResult.getData();
 				return result;

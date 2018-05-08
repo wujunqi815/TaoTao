@@ -28,6 +28,7 @@ public class SearchController {
 			}
 		}
 		SearchResult result = searchService.search(queryString, page);
+		
 		model.addAttribute("query", queryString);
 		model.addAttribute("totalPages", result.getPageCount());
 		model.addAttribute("itemList", result.getItemList());

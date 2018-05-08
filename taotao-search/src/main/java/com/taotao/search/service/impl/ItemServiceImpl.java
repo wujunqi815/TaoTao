@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.taotao.common.utils.ExceptionUtil;
@@ -20,6 +21,8 @@ public class ItemServiceImpl implements ItemService {
 	private ItemMapper itemMapper;
 	@Autowired
 	private SolrServer solrServer;
+	@Value("${IMAGE_URL}")
+	private String IMAGE_URL;
 
 	@Override
 	public TaotaoResult importAllItems() {
@@ -36,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
 				document.setField("item_sell_point", item.getSell_point());
 				document.setField("item_price", item.getPrice());
 				document.setField("item_image", item.getImage());
+				System.out.println(item.getImage());
 				document.setField("item_category_name", item.getCategory_name());
 				document.setField("item_desc", item.getItem_des());
 
