@@ -4,12 +4,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.DigestUtils;
 
+import com.mysql.jdbc.StringUtils;
+import com.taotao.common.utils.CookieUtils;
 import com.taotao.common.utils.ExceptionUtil;
 import com.taotao.common.utils.JsonUtils;
 import com.taotao.mapper.TbUserMapper;
@@ -82,7 +88,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TaotaoResult userLogin(String username, String password) {
+	public TaotaoResult userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
 
 		// 创建查询条件
 		TbUserExample example = new TbUserExample();
@@ -101,7 +107,25 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(null);
 		//把用户信息写入redis
 		//设置session过期时间
+		
+		//设置session
+		request.setAttribute("TT_TOKEN", token);
+		//设置cookie
+		CookieUtils.setCookie(request, response, "TT_TOKEN", token);
+		CookieUtils.setCookie(request, response, "TT_TOKEN_USER", JsonUtils.objectToJson(user));
 		return TaotaoResult.ok(token);
+	}
+
+	@Override
+	public TaotaoResult getUserByToken(String token, HttpServletRequest request, HttpServletResponse response) {
+//		String session = (String) request.getAttribute("TT_TOKEN");
+		String  cookie = CookieUtils.getCookieValue(request, "TT_TOKEN_USER");
+		System.out.println(cookie);
+		if(cookie.isEmpty()){
+			return TaotaoResult.build(400, "session过期");
+			
+		}
+		return TaotaoResult.ok(JsonUtils.jsonToPojo(cookie, TbUser.class));
 	}
 
 }

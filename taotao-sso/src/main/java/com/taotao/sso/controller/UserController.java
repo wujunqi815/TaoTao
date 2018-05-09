@@ -1,5 +1,8 @@
 package com.taotao.sso.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,14 +80,34 @@ public class UserController {
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	@ResponseBody
-	public TaotaoResult userLogin(String username, String password) {
+	public TaotaoResult userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
 		try{
-			TaotaoResult result = userService.userLogin(username, password);
+			TaotaoResult result = userService.userLogin(username, password, request, response);
 			System.out.println("login controller ok");
 			System.out.println(result.getStatus() + " " + result.getMsg() + " " + result.getData());
 			return result;
 		}catch(Exception e){
 			return TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
 		}
+	}
+	
+	@RequestMapping("/token/{token}")
+	@ResponseBody
+	public Object getToken(@PathVariable String token, String callback, HttpServletRequest request, HttpServletResponse response) {
+		TaotaoResult result = null;
+		try{
+			result = userService.getUserByToken(token, request, response);
+		}catch(Exception e){
+			result =  TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
+		}
+		
+		if (callback != null) {
+			MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(result);
+			mappingJacksonValue.setJsonpFunction(callback);
+			return mappingJacksonValue;
+		} else {
+			return result;
+		}
+
 	}
 }
