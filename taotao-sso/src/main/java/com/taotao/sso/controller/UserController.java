@@ -63,11 +63,12 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/register", method=RequestMethod.POST)
+	@ResponseBody
 	public TaotaoResult createUser(TbUser user) {
 		try{
 			TaotaoResult result = userService.createUser(user);
 			System.out.println("register controller ok");
-			System.out.println(result.getStatus());
+			System.out.println(result.getStatus() + " " + result.getMsg() + " " + result.getData());
 			return result;
 		}catch(Exception e){
 			return TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
@@ -75,6 +76,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@ResponseBody
 	public TaotaoResult userLogin(String username, String password) {
 		try{
 			TaotaoResult result = userService.userLogin(username, password);

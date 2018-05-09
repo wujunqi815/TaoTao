@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			userMapper.insert(user);
 			System.out.println("register ok");
-			return TaotaoResult.ok();
+			return TaotaoResult.ok(true);
 		} catch (Exception e) {
 			System.out.println("register nok");
 			return TaotaoResult.build(500, ExceptionUtil.getStackTrace(e));
