@@ -1,15 +1,19 @@
 package com.taotao.sso.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.taotao.common.utils.ExceptionUtil;
+import com.taotao.common.utils.JsonUtils;
 import com.taotao.pojo.TaotaoResult;
+import com.taotao.pojo.TbUser;
 import com.taotao.sso.service.UserService;
 
 @Controller
@@ -56,5 +60,29 @@ public class UserController {
 			return result;
 		}
 
+	}
+	
+	@RequestMapping(value="/register", method=RequestMethod.POST)
+	public TaotaoResult createUser(TbUser user) {
+		try{
+			TaotaoResult result = userService.createUser(user);
+			System.out.println("register controller ok");
+			System.out.println(result.getStatus());
+			return result;
+		}catch(Exception e){
+			return TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
+		}
+	}
+	
+	@RequestMapping(value="/login", method=RequestMethod.POST)
+	public TaotaoResult userLogin(String username, String password) {
+		try{
+			TaotaoResult result = userService.userLogin(username, password);
+			System.out.println("login controller ok");
+			System.out.println(result.getStatus() + " " + result.getMsg() + " " + result.getData());
+			return result;
+		}catch(Exception e){
+			return TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
+		}
 	}
 }
