@@ -57,8 +57,8 @@ public class ItemServiceImpl implements ItemService {
 
 		try {
 			String json = HttpClientUtil.doGet(REST_BASE_URL + DESC_URL + itemId);
-			// System.out.println("URL:"+ REST_BASE_URL + DESC_URL + itemId);
-			// System.out.println("商品描述："+ json);
+			 System.out.println("URL:"+ REST_BASE_URL + DESC_URL + itemId);
+			 System.out.println("商品描述："+ json);
 			if (!StringUtils.isBlank(json)) {
 				TaotaoResult result = TaotaoResult.formatToPojo(json, TbItemDesc.class);
 				if (result.getStatus() == 200) {
