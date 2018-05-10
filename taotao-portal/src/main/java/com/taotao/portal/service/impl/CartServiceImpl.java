@@ -40,8 +40,8 @@ public class CartServiceImpl implements CartService {
 		List<CartItem> list = getCartItemList(request);
 		for (CartItem cItem : list) {
 			if (cItem.getId() == itemId) {
+				cItem.setNum(cItem.getNum() + num);
 				cartItem = cItem;
-				cartItem.setNum(cItem.getNum() + num);
 				break;
 			}
 		}
@@ -84,6 +84,12 @@ public class CartServiceImpl implements CartService {
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
+	}
+
+	@Override
+	public List<CartItem> getCartItemList(HttpServletRequest request, HttpServletResponse response) {
+		List<CartItem> itemList = getCartItemList(request);
+		return itemList;
 	}
 
 }
