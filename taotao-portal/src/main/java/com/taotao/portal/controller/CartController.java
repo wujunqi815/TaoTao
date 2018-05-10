@@ -37,6 +37,12 @@ public class CartController {
 		return "redirect:/cart/success.html";
 	}
 	
+	@RequestMapping("/update/{itemId}")
+	public String updateCartNumber(@PathVariable Long itemId, @RequestParam()Integer num, HttpServletRequest request, HttpServletResponse response){
+		cartService.updateCartNumber(itemId, num, request, response);
+		return "redirect:/cart/success.html";
+	}
+	
 	@RequestMapping("/success")
 	public String showSuccess(){
 		return "cartSuccess";
@@ -47,5 +53,12 @@ public class CartController {
 		List<CartItem> cartList = cartService.getCartItemList(request, response);
 		model.addAttribute("cartList", cartList);
 		return "cart";
+	}
+	
+	@RequestMapping("/delete/{itemId}")
+	public String deleteCartItem(@PathVariable Long itemId, HttpServletRequest request, HttpServletResponse response, Model model){
+		List<CartItem> cartList = cartService.deletCartItem(itemId, request, response);
+		model.addAttribute("cartList", cartList);
+		return "redirect:/cart/cart.html";
 	}
 }
