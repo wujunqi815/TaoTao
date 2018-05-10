@@ -55,7 +55,7 @@ public class CartServiceImpl implements CartService {
 				TbItem item = (TbItem) result.getData();
 				cartItem.setId(item.getId());
 				cartItem.setImage(item.getImage() == null ? "" : item.getImage().split(",")[0]);
-				cartItem.setNum(item.getNum());
+				cartItem.setNum(num);
 				cartItem.setPrice(item.getPrice());
 				cartItem.setTitle(item.getTitle());
 			}
