@@ -31,8 +31,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private TbUserMapper userMapper;
 
-	@Value("${USER_SESSION_KEY}") 
-	private String USER_SESSION_KEY;
+	@Value("${TT_TOKEN_USER}") 
+	private String TT_TOKEN_USER;
 	
 	@Value("${SSO_SESSION_EXPIRE}") 
 	private Integer SSO_SESSION_EXPIRE;
@@ -108,23 +108,42 @@ public class UserServiceImpl implements UserService {
 		//把用户信息写入redis
 		//设置session过期时间
 		
-		//设置session
-		request.setAttribute("TT_TOKEN", token);
-		//设置cookie
+		//设置session(session不共享，用cookie代替)
+		CookieUtils.setCookie(request, response,TT_TOKEN_USER + "_" + token, JsonUtils.objectToJson(user));
+		System.out.println("set cookie:" + TT_TOKEN_USER + "_" + token);
+		
+		//设置cookie,taotao.js需要(首页会调用localhost:8084/user/token/{token})
 		CookieUtils.setCookie(request, response, "TT_TOKEN", token);
-		CookieUtils.setCookie(request, response, "TT_TOKEN_USER", JsonUtils.objectToJson(user));
 		return TaotaoResult.ok(token);
 	}
 
 	@Override
+	public TaotaoResult userLogout(HttpServletRequest request, HttpServletResponse response) {
+		CookieUtils.setCookie(request, response, "TT_TOKEN", "");
+		return TaotaoResult.ok();
+	}
+	
+	@Override
 	public TaotaoResult getUserByToken(String token, HttpServletRequest request, HttpServletResponse response) {
-//		String session = (String) request.getAttribute("TT_TOKEN");
-		String  cookie = CookieUtils.getCookieValue(request, "TT_TOKEN_USER");
-		System.out.println(cookie);
-		if(cookie.isEmpty()){
-			return TaotaoResult.build(400, "session过期");
-			
+		System.out.println(TT_TOKEN_USER + "_" + token);
+		String  cookieValue = CookieUtils.getCookieValue(request, TT_TOKEN_USER + "_" + token);
+		System.out.println(cookieValue.isEmpty());
+		System.out.println("get cookie");
+		if(!cookieValue.isEmpty()){
+			request.setAttribute("COOKIE", cookieValue);
+			System.out.println("user in cookie is not null");
+		}else{
+			System.out.println(cookieValue.isEmpty());
 		}
+		
+		String  cookie = (String) request.getAttribute("COOKIE");
+		if(cookie.isEmpty()){
+			System.out.println("user in session is null");
+			return TaotaoResult.build(400, "session过期");
+		}else{
+			System.out.println(JsonUtils.jsonToPojo(cookie, TbUser.class).getUsername());
+		}
+		
 		return TaotaoResult.ok(JsonUtils.jsonToPojo(cookie, TbUser.class));
 	}
 
