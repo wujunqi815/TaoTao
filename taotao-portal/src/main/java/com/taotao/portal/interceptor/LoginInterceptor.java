@@ -41,16 +41,16 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2) throws Exception {
 		// Handler执行之前，true执行，false不执行
 		
-		String token = CookieUtils.getCookieValue(arg0, "TT_TOKEN");
-		TbUser user = userService.getUserByToken(token);
-		
-		if(user == null){
-			arg1.sendRedirect(userService.SSO_BASE_URL + userService.SSO_PAGE_LOGIN + "?redirect=" + arg0.getRequestURL());
-			//返回false
-			return false;
-
-		}
-		return false;
+//		String token = CookieUtils.getCookieValue(arg0, "TT_TOKEN");
+//		TbUser user = userService.getUserByToken(token);
+//		
+//		if(user == null){
+//			arg1.sendRedirect(userService.SSO_BASE_URL + userService.SSO_PAGE_LOGIN + "?redirect=" + arg0.getRequestURL());
+//			//返回false
+//			return false;
+//
+//		}
+		return true;
 	}
 
 }
