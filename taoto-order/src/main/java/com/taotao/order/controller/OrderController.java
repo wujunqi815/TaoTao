@@ -22,7 +22,7 @@ public class OrderController {
 	@RequestMapping("/create")
 	public TaotaoResult createOrder(@RequestBody Order order){
 		try{
-			TaotaoResult result = orderService.createOrder(order, order.getOrderItems(), order.getOrderShippings());
+			TaotaoResult result = orderService.createOrder(order, order.getOrderItems(), order.getOrderShipping());
 			return result;
 		}catch(Exception e){
 			e.printStackTrace();

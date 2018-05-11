@@ -35,8 +35,8 @@ public class OrderServiceImpl implements OrderService {
 	public TaotaoResult createOrder(TbOrder order, List<TbOrderItem> itemList, TbOrderShipping orderShipping) {
 		
 		String uuid = UUID.randomUUID().toString();
-		String orderId = "TAOTAO_" + uuid + order.getBuyerNick();
-		
+		String orderId = "TT_";
+		System.out.print(orderId);
 		order.setOrderId(orderId);
 		//状态：1、未付款，2、已付款，3、未发货，4、已发货，5、交易成功，6、交易关闭
 		order.setStatus(1);
@@ -47,9 +47,12 @@ public class OrderServiceImpl implements OrderService {
 		orderMapper.insert(order);
 		
 		//插入订单明细
+		Integer i = 1;
 		for(TbOrderItem orderItem : itemList){
 			String newUuid = UUID.randomUUID().toString();
-			String orderDetailId = "TAOTAO_ORDER_ID_" + newUuid + order.getBuyerNick();
+			i++;
+			String orderDetailId = "T_" + i.toString();
+			System.out.print(orderDetailId);
 			orderItem.setId(orderDetailId + "");
 			orderItem.setOrderId(orderId + "");
 			orderItemMapper.insert(orderItem);
@@ -59,6 +62,8 @@ public class OrderServiceImpl implements OrderService {
 		orderShipping.setOrderId(orderId + "");
 		orderShipping.setCreated(new Date());
 		orderShipping.setUpdated(new Date());
+		orderShippingMapper.insert(orderShipping);
+		
 		return TaotaoResult.ok(orderId);
 	}
 
