@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taotao.common.utils.IDUtils;
 import com.taotao.mapper.TbOrderItemMapper;
 import com.taotao.mapper.TbOrderMapper;
 import com.taotao.mapper.TbOrderShippingMapper;
@@ -34,9 +35,8 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public TaotaoResult createOrder(TbOrder order, List<TbOrderItem> itemList, TbOrderShipping orderShipping) {
 		
-		String uuid = UUID.randomUUID().toString();
-		String orderId = "TT_";
-		System.out.print(orderId);
+		String orderName = IDUtils.genImageName();
+		String orderId = "T_" + orderName;
 		order.setOrderId(orderId);
 		//状态：1、未付款，2、已付款，3、未发货，4、已发货，5、交易成功，6、交易关闭
 		order.setStatus(1);
@@ -47,19 +47,16 @@ public class OrderServiceImpl implements OrderService {
 		orderMapper.insert(order);
 		
 		//插入订单明细
-		Integer i = 1;
 		for(TbOrderItem orderItem : itemList){
-			String newUuid = UUID.randomUUID().toString();
-			i++;
-			String orderDetailId = "T_" + i.toString();
-			System.out.print(orderDetailId);
+			String orderDeatilName = IDUtils.genImageName();
+			String orderDetailId = "D_" + orderDeatilName;
 			orderItem.setId(orderDetailId + "");
 			orderItem.setOrderId(orderId + "");
 			orderItemMapper.insert(orderItem);
 		}
 		
 		//插入物流表
-		orderShipping.setOrderId(orderId + "");
+		orderShipping.setOrderId(orderId);
 		orderShipping.setCreated(new Date());
 		orderShipping.setUpdated(new Date());
 		orderShippingMapper.insert(orderShipping);
