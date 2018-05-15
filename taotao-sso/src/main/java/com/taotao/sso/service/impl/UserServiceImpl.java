@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.util.DigestUtils;
 
-import com.mysql.jdbc.StringUtils;
 import com.taotao.common.utils.CookieUtils;
 import com.taotao.common.utils.ExceptionUtil;
 import com.taotao.common.utils.JsonUtils;
@@ -23,6 +23,7 @@ import com.taotao.pojo.TaotaoResult;
 import com.taotao.pojo.TbUser;
 import com.taotao.pojo.TbUserExample;
 import com.taotao.pojo.TbUserExample.Criteria;
+import com.taotao.sso.dao.JedisClient;
 import com.taotao.sso.service.UserService;
 
 @Service
@@ -31,11 +32,13 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private TbUserMapper userMapper;
 
-	@Value("${TT_TOKEN_USER}") 
-	private String TT_TOKEN_USER;
+	@Autowired
+	private JedisClient jedisClient;
 	
 	@Value("${SSO_SESSION_EXPIRE}") 
 	private Integer SSO_SESSION_EXPIRE;
+	@Value("${REDIS_USER_SESSION_KEY}")
+	private String REDIS_USER_SESSION_KEY;
 
 	@Override
 	public TaotaoResult checkData(String content, Integer type) {
@@ -105,15 +108,15 @@ public class UserServiceImpl implements UserService {
 		}
 		String token = UUID.randomUUID().toString();
 		user.setPassword(null);
+		
 		//把用户信息写入redis
-		//设置session过期时间
+		jedisClient.set(REDIS_USER_SESSION_KEY + ":" + token, JsonUtils.objectToJson(user));
+		//设置session过期时间30min
+		jedisClient.expire(REDIS_USER_SESSION_KEY + ":" + token, SSO_SESSION_EXPIRE);
 		
-		//设置session(session不共享，用cookie代替)
-		CookieUtils.setCookie(request, response,TT_TOKEN_USER + "_" + token, JsonUtils.objectToJson(user));
-		System.out.println("set cookie:" + TT_TOKEN_USER + "_" + token);
-		
-		//设置cookie,taotao.js需要(首页会调用localhost:8084/user/token/{token})
+		//将token写到cookie,taotao.js需要(首页会调用localhost:8084/user/token/{token})
 		CookieUtils.setCookie(request, response, "TT_TOKEN", token);
+		
 		return TaotaoResult.ok(token);
 	}
 
@@ -125,26 +128,13 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public TaotaoResult getUserByToken(String token, HttpServletRequest request, HttpServletResponse response) {
-		System.out.println(TT_TOKEN_USER + "_" + token);
-		String  cookieValue = CookieUtils.getCookieValue(request, TT_TOKEN_USER + "_" + token);
-		System.out.println(cookieValue.isEmpty());
-		System.out.println("get cookie");
-		if(!cookieValue.isEmpty()){
-			request.setAttribute("COOKIE", cookieValue);
-			System.out.println("user in cookie is not null");
-		}else{
-			System.out.println(cookieValue.isEmpty());
-		}
-		
-		String  cookie = (String) request.getAttribute("COOKIE");
-		if(cookie.isEmpty()){
-			System.out.println("user in session is null");
+		String json = jedisClient.get(REDIS_USER_SESSION_KEY + ":" + token);
+		if(StringUtils.isBlank(json)){
 			return TaotaoResult.build(400, "session过期");
-		}else{
-			System.out.println(JsonUtils.jsonToPojo(cookie, TbUser.class).getUsername());
 		}
+		jedisClient.expire(REDIS_USER_SESSION_KEY + ":" + token, SSO_SESSION_EXPIRE);
 		
-		return TaotaoResult.ok(JsonUtils.jsonToPojo(cookie, TbUser.class));
+		return TaotaoResult.ok(JsonUtils.jsonToPojo(json, TbUser.class));
 	}
 
 }

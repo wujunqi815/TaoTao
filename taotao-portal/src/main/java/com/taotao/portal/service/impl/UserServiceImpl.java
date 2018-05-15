@@ -25,19 +25,16 @@ public class UserServiceImpl implements UserService {
 		try{
 		String json = HttpClientUtil.doGet(SSO_BASE_URL + SSO_USER_TOKEN + token);
 		System.out.println(SSO_BASE_URL + SSO_USER_TOKEN + token);
-		TbUser jj = JsonUtils.jsonToPojo(json, TbUser.class);
-		System.out.println(jj.getUsername());
+
 		TaotaoResult result = TaotaoResult.formatToPojo(json, TbUser.class);
 		
 		if(result.getStatus() == 200){
 			TbUser user = (TbUser)result.getData();
-			System.out.println("get token:" + user.getUsername());
 			return user;
 		}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		System.out.println("don't get token");
 		return null;
 	}
 

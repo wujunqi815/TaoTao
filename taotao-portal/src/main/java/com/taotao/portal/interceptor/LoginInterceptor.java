@@ -18,14 +18,14 @@ public class LoginInterceptor implements HandlerInterceptor {
 	private UserServiceImpl userService;
 	
 	@Override
-	public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception arg3)
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception model)
 			throws Exception {
 		// 响应用户之后
 
 	}
 
 	@Override
-	public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, ModelAndView arg3)
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object object, ModelAndView model)
 			throws Exception {
 		// handler执行之后，ModelAndView返回之前
 
@@ -38,18 +38,18 @@ public class LoginInterceptor implements HandlerInterceptor {
 	 * 取到->直接放行，返回true
 	 */
 	@Override
-	public boolean preHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2) throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
 		// Handler执行之前，true执行，false不执行
 		
-//		String token = CookieUtils.getCookieValue(arg0, "TT_TOKEN");
-//		TbUser user = userService.getUserByToken(token);
-//		
-//		if(user == null){
-//			arg1.sendRedirect(userService.SSO_BASE_URL + userService.SSO_PAGE_LOGIN + "?redirect=" + arg0.getRequestURL());
-//			//返回false
-//			return false;
-//
-//		}
+		String token = CookieUtils.getCookieValue(request, "TT_TOKEN");
+		TbUser user = userService.getUserByToken(token);
+		
+		if(user == null){
+			response.sendRedirect(userService.SSO_BASE_URL + userService.SSO_PAGE_LOGIN + "?redirect=" + request.getRequestURL());
+			//返回false
+			return false;
+
+		}
 		return true;
 	}
 
