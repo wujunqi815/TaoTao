@@ -121,8 +121,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public TaotaoResult userLogout(HttpServletRequest request, HttpServletResponse response) {
+	public TaotaoResult userLogout(String token, HttpServletRequest request, HttpServletResponse response) {
 		CookieUtils.setCookie(request, response, "TT_TOKEN", "");
+		jedisClient.expire(REDIS_USER_SESSION_KEY + ":" + token, SSO_SESSION_EXPIRE);
 		return TaotaoResult.ok();
 	}
 	

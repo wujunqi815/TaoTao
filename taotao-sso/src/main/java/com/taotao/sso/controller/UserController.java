@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.taotao.common.utils.ExceptionUtil;
@@ -91,14 +92,17 @@ public class UserController {
 		}
 	}
 	
-	@RequestMapping("/logout")
-	@ResponseBody
-	public TaotaoResult userLogout(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping("/logout/{token}")
+	public String userLogout(String token, HttpServletRequest request, HttpServletResponse response) {
 		try{
-			TaotaoResult result = userService.userLogout(request, response);
-			return result;
+			TaotaoResult result = userService.userLogout(token, request, response);
+			if(result.getStatus() == 200){
+				return "redirect:http://localhost:8082";
+			}
+			return "error";
 		}catch(Exception e){
-			return TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
+			e.printStackTrace();
+			return "error";
 		}
 	}
 	
