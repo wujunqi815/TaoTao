@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.taotao.common.utils.CookieUtils;
+import com.taotao.pojo.TbUser;
 import com.taotao.portal.pojo.CartItem;
 import com.taotao.portal.pojo.Order;
 import com.taotao.portal.service.CartService;
 import com.taotao.portal.service.OrderService;
+import com.taotao.portal.service.impl.UserServiceImpl;
 
 @Controller
 @RequestMapping("/order")
@@ -26,7 +29,9 @@ public class OrderController {
 	private CartService cartService;
 	@Autowired
 	private OrderService orderService;
-
+	@Autowired
+	private UserServiceImpl userService;
+	
 	@RequestMapping("/order-cart")
 	public String showOrderCart(HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<CartItem> cartList = cartService.getCartItemList(request, response);
@@ -37,6 +42,10 @@ public class OrderController {
 	@RequestMapping("/create")
 	public String createOrder(Order order, HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
+			String token = CookieUtils.getCookieValue(request, "TT_TOKEN");
+			TbUser user = userService.getUserByToken(token);
+			order.setUserId(user.getId());
+			
 			String orderId = orderService.createOrder(order, request, response);
 			model.addAttribute("orderId", orderId);
 			model.addAttribute("payment", order.getPayment());
