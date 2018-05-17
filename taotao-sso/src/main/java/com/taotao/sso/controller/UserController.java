@@ -71,8 +71,8 @@ public class UserController {
 	public TaotaoResult createUser(TbUser user) {
 		try{
 			TaotaoResult result = userService.createUser(user);
-			System.out.println("register controller ok");
-			System.out.println(result.getStatus() + " " + result.getMsg() + " " + result.getData());
+//			System.out.println("register controller ok");
+//			System.out.println(result.getStatus() + " " + result.getMsg() + " " + result.getData());
 			return result;
 		}catch(Exception e){
 			return TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
@@ -84,8 +84,8 @@ public class UserController {
 	public TaotaoResult userLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
 		try{
 			TaotaoResult result = userService.userLogin(username, password, request, response);
-			System.out.println("login controller ok");
-			System.out.println(result.getStatus() + " " + result.getMsg() + " " + result.getData());
+//			System.out.println("login controller ok");
+//			System.out.println(result.getStatus() + " " + result.getMsg() + " " + result.getData());
 			return result;
 		}catch(Exception e){
 			return TaotaoResult.build(500, ExceptionUtils.getStackTrace(e));
